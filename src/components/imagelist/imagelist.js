@@ -1,53 +1,73 @@
-import headerDOM from './imagelist.html';
+import imageListDOM from './imagelist.html';
 import './imagelist.scss';
 
 import ImageAPI from '../../js/api';
 const imageAPI = new ImageAPI();
 
-const myDOM = new DOMParser().parseFromString(headerDOM, 'text/html');
-
 const $ = (param, defaultDOM = document) => defaultDOM.querySelector(param);
 const $$ = (param, defaultDOM = document) => defaultDOM.querySelectorAll(param);
 
 export default class {
-    constructor() {
-        this.init();
+    isOpened = false;
+    containerName = null;
+    myDOM = new DOMParser().parseFromString(imageListDOM, 'text/html');
+
+    constructor(containerName, title) {
+        this.containerName = containerName;
+        this.init(title);
     }
 
-    init = async () => {
-        $('button.load-more', myDOM).addEventListener('click', this.clickEvent);
-        window.addEventListener('resize', this.resizeEvent);
+    init = async (title) => {
+        $('div.image-list-container', this.myDOM).dataset.container = this.containerName;
+        $('p.title', this.myDOM).textContent = title;
+        $('button.load-more', this.myDOM).addEventListener('click', this.clickEvent);
     };
 
     clickEvent = (event) => {
-        $('.image-list-wrapper').style.height = 'auto';
-        $('button.load-more').classList.add('hide');
+        if (!this.isOpened) {
+            $$(`[data-container=${this.containerName}] li.image-item.hide`).forEach((item) => {
+                item.classList.remove('hide');
+            });
+
+            this.isOpened = true;
+            $(`[data-container=${this.containerName}] button.load-more`).classList.add('hide');
+        }
     };
 
-    resizeEvent = (event) => {
-        let nowMedia = getComputedStyle(document.documentElement)
-            .getPropertyValue('--now-media')
-            .trim();
+    createEleFromImages = (imageList, onlyDev = false) => {
+        // <li class="image-item">
+        //     <a href="#">
+        //         <img src="../../assets/images/test_asset/10.jpg" alt="" />
+        //     </a>
+        // </li>;
 
-        let isDesktop = nowMedia == `desktop`;
+        for (let [index, imageItem] of imageList.entries()) {
+            let newLi = this.myDOM.createElement('li');
+            let newA = this.myDOM.createElement('a');
+            let newImg = this.myDOM.createElement('img');
 
-        this.updateWrapperHeight(document, !isDesktop);
-    };
+            newA.setAttribute('href', `/view/${imageItem.imageUrl.split('.')[0]}`);
 
-    updateWrapperHeight = (defaultDOM = document, isAuto = false) => {
-        if (isAuto) {
-            $('.image-list-wrapper', defaultDOM).style.height = 'auto';
-        } else {
-            let fixedHeight = $('.image-item', defaultDOM).clientHeight;
-            let curHeight = $('.image-list-wrapper', defaultDOM).clientHeight;
-
-            if (fixedHeight !== curHeight) {
-                $('.image-list-wrapper', defaultDOM).style.height = `${fixedHeight}px`;
+            if (onlyDev) {
+                newImg.setAttribute('src', `/images/test_asset/${imageItem.imageUrl}`);
+            } else {
+                newImg.setAttribute('src', imageItem.imageUrl);
             }
+
+            newLi.setAttribute('class', 'image-item');
+
+            if (index > 4) {
+                newLi.classList.add('hide');
+            }
+
+            newA.appendChild(newImg);
+            newLi.appendChild(newA);
+
+            $('ul.image-list', this.myDOM).appendChild(newLi);
         }
     };
 
     async getComponent() {
-        return myDOM.body.childNodes[0];
+        return this.myDOM.body.childNodes[0];
     }
 }

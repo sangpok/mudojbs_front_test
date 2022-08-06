@@ -1,6 +1,6 @@
 export default class {
     BASE_URL = 'https://imbilly.site/api/v1';
-    TEST_BASE_URL = 'http://localhost:3000/api/v1';
+    TEST_BASE_URL = 'http://localhost:8080/api/v1';
 
     constructor() {}
 

@@ -1,0 +1,23 @@
+@import '../../styles/mixins';
+
+.masonry-container {
+    --gap: 10px;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: var(--gap);
+    grid-auto-rows: 10px;
+}
+
+@include mobile {
+    .masonry-container {
+        // display: block;
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@include tablet {
+    .masonry-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

@@ -3,8 +3,11 @@ import HomeView from './HomeView.html';
 import './HomeView.scss';
 
 import ImageList from '../../components/imagelist/imagelist';
-const popularComponent = new ImageList();
-const recentComponent = new ImageList();
+const popularComponent = new ImageList('popular', '#최근_가장_인기있는_짤');
+const recentComponent = new ImageList('recent', '#최근_추가된_짤');
+
+import MasonryList from '../../components/masonrylist/masonrylist';
+const masonryComponent = new MasonryList();
 
 import ImageAPI from '../../js/api';
 const imageAPI = new ImageAPI();
@@ -24,138 +27,18 @@ export default class extends AbstractView {
 
     init = async () => {
         await this.attachComponent();
-        // await this.loadPopularContent(true);
-        // await this.loadRecentContent(true);
-        // await this.loadRandomContent(true);
-        // this.$$('.container-wrapper').forEach((item) => {
-        //     item.addEventListener('mousedown', this.mouseDownHandler);
-        // });
     };
 
     attachComponent = async () => {
         const root = $('.page-inside');
+
+        popularComponent.createEleFromImages(await imageAPI.getImage('임시', 1, 10, true), true);
+        recentComponent.createEleFromImages(await imageAPI.getImage('임시', 1, 10, true), true);
+        masonryComponent.createEleFromImages(await imageAPI.getImage('임시', 1, 10, true), true);
+
         root.appendChild(await popularComponent.getComponent());
-        // root.appendChild(recentComponent);
-    };
-
-    loadPopularContent = async (onlyDev = false) => {
-        let imageList = null;
-
-        if (onlyDev) {
-            imageList = await imageAPI.getImage('임시', 1, 10, onlyDev);
-        } else {
-            imageList = await imageAPI.getImagePopular();
-        }
-
-        for (let imageItem of imageList) {
-            let newA = this.myDOM.createElement('a');
-            let newImg = this.myDOM.createElement('img');
-
-            newA.setAttribute('class', 'image-item');
-            newA.setAttribute('href', `/view/${imageItem.imageUrl.split('.')[0]}`);
-
-            if (onlyDev) {
-                newImg.setAttribute('src', `../../images/test_asset/${imageItem.imageUrl}`);
-            } else {
-                newImg.setAttribute('src', imageItem.imageUrl);
-            }
-
-            newA.appendChild(newImg);
-
-            this.$('#popular-group .image-list-container').appendChild(newA);
-        }
-    };
-
-    loadRecentContent = async (onlyDev = false) => {
-        let imageList = null;
-
-        if (onlyDev) {
-            imageList = await imageAPI.getImage('임시', 1, 10, onlyDev);
-        } else {
-            imageList = await imageAPI.getImageNew();
-        }
-
-        for (let imageItem of imageList) {
-            let newA = this.myDOM.createElement('a');
-            let newImg = this.myDOM.createElement('img');
-
-            newA.setAttribute('class', 'image-item');
-            newA.setAttribute('href', `/view/${imageItem.imageUrl.split('.')[0]}`);
-
-            if (onlyDev) {
-                newImg.setAttribute('src', `../../images/test_asset/${imageItem.imageUrl}`);
-            } else {
-                newImg.setAttribute('src', imageItem.imageUrl);
-            }
-
-            newA.appendChild(newImg);
-
-            this.$('#recent-group .image-list-container').appendChild(newA);
-        }
-    };
-
-    loadRandomContent = async (onlyDev = false) => {
-        let imageList = null;
-
-        if (onlyDev) {
-            imageList = await imageAPI.getImage('임시', 1, 10, onlyDev);
-        } else {
-            imageList = await imageAPI.getImageRandom();
-        }
-
-        for (let imageItem of imageList) {
-            let newFigure = this.myDOM.createElement('figure');
-            let newA = this.myDOM.createElement('a');
-            let newImg = this.myDOM.createElement('img');
-
-            newA.setAttribute('href', `/view/${imageItem.imageUrl.split('.')[0]}`);
-            newFigure.setAttribute('class', 'image-item');
-            newImg.setAttribute('src', `../../images/test_asset/${imageItem.imageUrl}`);
-            newA.appendChild(newImg);
-            newFigure.appendChild(newA);
-
-            this.$('#new-group .tiled-list-container').appendChild(newFigure);
-        }
-    };
-
-    container = null;
-
-    mouseDownHandler = (e) => {
-        this.container = e.target.closest('.container-wrapper');
-
-        this.pos = {
-            left: this.container.scrollLeft,
-            top: this.container.scrollTop,
-
-            x: e.clientX,
-            y: e.clientY,
-        };
-
-        document.addEventListener('mousemove', this.mouseMoveHandler);
-        document.addEventListener('mouseup', this.mouseUpHandler);
-    };
-
-    mouseMoveHandler = (e) => {
-        const dx = e.clientX - this.pos.x;
-        const dy = e.clientY - this.pos.y;
-
-        let nowMedia = getComputedStyle(document.documentElement)
-            .getPropertyValue('--now-media')
-            .trim();
-
-        let isDesktop = nowMedia == `desktop`;
-
-        if (!isDesktop) {
-            this.container.scrollTop = this.pos.top - dy;
-            this.container.scrollLeft = this.pos.left - dx;
-        }
-    };
-
-    mouseUpHandler = () => {
-        document.removeEventListener('mousemove', this.mouseMoveHandler);
-        document.removeEventListener('mouseup', this.mouseUpHandler);
-
-        this.container.style.removeProperty('user-select');
+        root.appendChild(await recentComponent.getComponent());
+        root.appendChild(await masonryComponent.getComponent());
     };
 
     async getView() {

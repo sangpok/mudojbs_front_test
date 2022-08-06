@@ -16,7 +16,7 @@ export default class {
     };
 
     windowClickEvent = (event) => {
-        let container = event.target.closest('[data-container]');
+        let container = event.target.closest('[data-search-container]');
 
         if (!container) {
             $(`#related-box`).classList.remove('show');
@@ -39,6 +39,9 @@ export default class {
                     $(`#related-box`).classList.add('show');
                     $(`#search-box`).classList.add('focus');
                 }
+            } else {
+                $(`#related-box`).classList.add('show');
+                $(`#search-box`).classList.add('focus');
             }
         }
     };
