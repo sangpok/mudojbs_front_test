@@ -47,9 +47,10 @@ const config = {
                 });
             });
 
-            // /api 로 요청시 mocks/api경로에 있는 json을 응답할 수 있게 합니다.
-            // npm i -D connect-api-mocker 설치 필요합니다.
-            //devServer.app.use(apiMocker("/api", "mocks/api"));
+            devServer.app.get('*', (req, res, next) => {
+                // res.sendFile(path.resolve(__dirname, './dist/index.html'));
+                next();
+            });
         },
     },
     plugins: [

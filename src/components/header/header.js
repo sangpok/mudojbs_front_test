@@ -13,6 +13,13 @@ export default class {
 
     init = async () => {
         window.addEventListener('click', this.windowClickEvent);
+        window.addEventListener('ATTACHED_COMPONENT', this.attached);
+    };
+
+    attached = (event) => {
+        if (event.detail.type === 'header') {
+            console.log('Attached Header Component');
+        }
     };
 
     windowClickEvent = (event) => {
@@ -64,6 +71,6 @@ export default class {
     };
 
     async getComponent() {
-        return this.myDOM.body.childNodes[0];
+        return this.myDOM.body.childNodes[0].cloneNode(true);
     }
 }

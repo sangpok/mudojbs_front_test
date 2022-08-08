@@ -18,9 +18,27 @@ export default class {
     }
 
     init = async (title) => {
+        // console.log(window.onclick);
+        window.addEventListener('ATTACHED_COMPONENT', this.attached);
+
         $('div.image-list-container', this.myDOM).dataset.container = this.containerName;
         $('p.title', this.myDOM).textContent = title;
         $('button.load-more', this.myDOM).addEventListener('click', this.clickEvent);
+    };
+
+    attached = (event) => {
+        if (event.detail.type === 'imagelist') {
+            switch (event.detail.target) {
+                case 'popular':
+                    console.log(`Attached imagelist(${event.detail.target}) Component`);
+                    break;
+
+                case 'recent':
+                    console.log(`Attached imagelist(${event.detail.target}) Component`);
+                    break;
+            }
+            window.removeEventListener('ATTACHED_COMPONENT', this.attached);
+        }
     };
 
     clickEvent = (event) => {
@@ -68,6 +86,6 @@ export default class {
     };
 
     async getComponent() {
-        return this.myDOM.body.childNodes[0];
+        return this.myDOM.body.childNodes[0].cloneNode(true);
     }
 }

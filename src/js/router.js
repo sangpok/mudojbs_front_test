@@ -4,6 +4,8 @@ import ExploreView from '../views/Explore/ExploreView';
 import DetailView from '../views/Detail/DetailView';
 import CreateView from '../views/Create/CreateView';
 
+import CustomEvents from './events';
+
 const $ = (param) => document.querySelector(param);
 const $$ = (param) => document.querySelectorAll(param);
 
@@ -33,7 +35,20 @@ const routes = [
 export default class {
     constructor() {
         console.log('Created Router');
+        window.addEventListener('click', this.clickEvent);
     }
+
+    clickEvent = (event) => {
+        let linkElem = event.target.closest('a');
+
+        if (linkElem) {
+            console.log('clicked link');
+            event.stopPropagation();
+            event.preventDefault();
+
+            this.navigate(linkElem.href);
+        }
+    };
 
     route = async () => {
         let match = null;
@@ -53,9 +68,20 @@ export default class {
         let pageName = match.path.substring(1);
         if (pageName === '') pageName = 'home';
 
-        $('#app').innerHTML = '';
-        $('#app').className = pageName;
-        $('#app').appendChild(await view.getView());
+        const root = $('#app');
+        root.innerHTML = '';
+        console.log(root.innerHTML);
+        root.className = pageName;
+
+        const config = { attributes: true, childList: true, subtree: true };
+        const observer = new MutationObserver((mutation, observer) => {
+            observer.disconnect();
+            window.dispatchEvent(CustomEvents.ATTACHED_VIEW(pageName));
+        });
+
+        observer.observe(root, config);
+
+        root.appendChild(await view.getView());
 
         if (location.pathname.startsWith('/view/')) {
             window.scrollTo(0, 0);
