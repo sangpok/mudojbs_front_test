@@ -4,6 +4,9 @@ import ExploreView from '../views/Explore/ExploreView';
 import DetailView from '../views/Detail/DetailView';
 import CreateView from '../views/Create/CreateView';
 
+import HeaderComponent from '../components/header/header';
+let myHeader = null;
+
 import CustomEvents from './events';
 
 const $ = (param) => document.querySelector(param);
@@ -32,29 +35,18 @@ const routes = [
     },
 ];
 
+let currentPath = null;
+
 export default class {
-    constructor() {
-        console.log('Created Router');
-        window.addEventListener('click', this.clickEvent);
-    }
-
-    clickEvent = (event) => {
-        let linkElem = event.target.closest('a');
-
-        if (linkElem) {
-            console.log('clicked link');
-            event.stopPropagation();
-            event.preventDefault();
-
-            this.navigate(linkElem.href);
-        }
-    };
+    constructor() {}
 
     route = async () => {
         let match = null;
 
         if (location.pathname.startsWith('/view/')) {
             match = routes.find((route) => route.path === '/view');
+        } else if (location.pathname.startsWith('/search/')) {
+            match = routes.find((route) => route.path === '/search');
         } else {
             match = routes.find((route) => location.pathname === route.path) || routes[0];
         }
@@ -69,8 +61,17 @@ export default class {
         if (pageName === '') pageName = 'home';
 
         const root = $('#app');
+
+        // const config2 = { attributes: true, childList: true, subtree: true };
+        // const observer2 = new MutationObserver((mutation, observer) => {
+        // observer.disconnect();
+        console.log(currentPath);
+        if (currentPath !== null) window.dispatchEvent(CustomEvents.DEATTACHED_VIEW(pageName));
+        // });
+
+        // observer2.observe(root, config2);
+
         root.innerHTML = '';
-        console.log(root.innerHTML);
         root.className = pageName;
 
         const config = { attributes: true, childList: true, subtree: true };
@@ -83,10 +84,19 @@ export default class {
 
         root.appendChild(await view.getView());
 
+        myHeader = new HeaderComponent();
+        myHeader.updateMenuState();
+
+        if (pageName === 'search') {
+            myHeader.setSearchQuery(decodeURIComponent(urlParams[0]));
+        }
+
         if (location.pathname.startsWith('/view/')) {
             window.scrollTo(0, 0);
         } else if (location.pathname.startsWith('/create')) {
         }
+
+        currentPath = match.path;
     };
 
     navigate = (url) => {

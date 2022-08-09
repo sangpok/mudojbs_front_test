@@ -7,6 +7,10 @@ div.new-image-container {
         font-size: 42px;
         font-weight: 700;
         margin-bottom: 48px;
+
+        &.hide {
+            display: none;
+        }
     }
 }
 
@@ -37,6 +41,11 @@ div.new-image-container {
 }
 
 @include mobile {
+    div.new-image-container p.title {
+        font-size: 24px;
+        margin-bottom: 24px;
+    }
+
     .masonry-container {
         // display: block;
         grid-template-columns: repeat(2, 1fr);
@@ -44,6 +53,10 @@ div.new-image-container {
 }
 
 @include tablet {
+    div.new-image-container p.title {
+        font-size: 34px;
+        margin-bottom: 42px;
+    }
     .masonry-container {
         grid-template-columns: repeat(3, 1fr);
     }

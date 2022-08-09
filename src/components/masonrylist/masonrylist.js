@@ -10,15 +10,41 @@ const $$ = (param, defaultDOM = document) => defaultDOM.querySelectorAll(param);
 export default class {
     myDOM = new DOMParser().parseFromString(masonryListDOM, 'text/html');
     isAttached = false;
+    containerName = null;
 
-    constructor(title) {
+    constructor(containerName, title = '') {
+        this.containerName = containerName;
         this.init(title);
     }
 
     init = async (title) => {
-        $('p.title', this.myDOM).textContent = title;
-        window.addEventListener('ATTACHED_COMPONENT', this.attached);
-        window.addEventListener('resize', this.debounce(this.resizeEvent, 5));
+        if (title === '') {
+            $('p.title', this.myDOM).classList.add('hide');
+        } else {
+            $('p.title', this.myDOM).textContent = title;
+        }
+
+        window.addEventListener(
+            `ATTACHED_COMPONENT_masonrylist_${this.containerName}`,
+            this.attached,
+            {
+                once: true,
+            }
+        );
+
+        window.addEventListener(
+            `DEATTACHED_COMPONENT_masonrylist_${this.containerName}`,
+            this.deattached,
+            {
+                once: true,
+            }
+        );
+
+        window.addEventListener('resize', this.resizeEvent);
+    };
+
+    resizeEvent = (event) => {
+        this.debounce(this.masonryLayout(event), 5);
     };
 
     debounce = (func, duration) => {
@@ -32,11 +58,6 @@ export default class {
                 timeout = null;
             }, duration);
         };
-    };
-
-    resizeEvent = (event) => {
-        // if ($('.page-inside').clientWidth === 1440) return;
-        this.masonryLayout();
     };
 
     masonryLayout = () => {
@@ -61,10 +82,7 @@ export default class {
             newA.setAttribute('href', `/view/${imageItem.imageUrl.split('.')[0]}`);
             newDiv.setAttribute('class', 'masonry-item');
             newImg.setAttribute('src', `../images/test_asset/${imageItem.imageUrl}`);
-            newImg.addEventListener('load', (event) => {
-                this.masonryLayout();
-                console.log('이것 때문에 되는 거 아니였어?');
-            });
+            newImg.addEventListener('load', this.masonryLayout, { once: true });
             newA.appendChild(newImg);
             newDiv.appendChild(newA);
 
@@ -76,33 +94,58 @@ export default class {
         }
     };
 
-    attached = (event) => {
-        if (event.detail.type === 'masonrylist') {
-            console.log(`Attached masonrylist(${event.detail.target}) component`);
-            this.masonryLayout();
+    waitForImages = () => {
+        const allMasonryItems = [...$$('.masonry-item img')];
+        const allPromises = allMasonryItems.map(
+            (item) =>
+                new Promise((res) => {
+                    if (item.complete) return res();
+                    item.onload = () => res();
+                    item.onerror = () => res();
+                })
+        );
 
-            let $contentItem = $('.masonry-item:last-child');
+        return Promise.all(allPromises);
+    };
 
-            const io = new IntersectionObserver(
-                async (entry, observer) => {
-                    const ioTarget = entry[0].target;
+    attached = async (event) => {
+        switch (event.detail.target) {
+            case 'new':
+                console.log(`Attached masonrylist(${event.detail.target}) component`);
+                break;
 
-                    if (entry[0].isIntersecting) {
-                        io.unobserve($contentItem);
-                        this.appendImages(await imageAPI.getImage('임시', 1, 30, true));
-
-                        $contentItem = $('.masonry-item:last-child');
-                        io.observe($contentItem);
-                    }
-                },
-                {
-                    threshold: 0.5,
-                }
-            );
-
-            io.observe($contentItem);
-            window.removeEventListener('ATTACHED_COMPONENT', this.attached);
+            case 'related':
+                console.log(`Attached masonrylist(${event.detail.target}) component`);
+                break;
         }
+
+        await this.waitForImages();
+        this.masonryLayout();
+
+        let lastItem = $('.masonry-item:last-child');
+
+        const io = new IntersectionObserver(
+            async (entry, observer) => {
+                const ioTarget = entry[0].target;
+
+                if (entry[0].isIntersecting) {
+                    io.unobserve(lastItem);
+                    this.appendImages(await imageAPI.getImage('임시', 1, 30, true));
+
+                    lastItem = $('.masonry-item:last-child');
+                    io.observe(lastItem);
+                }
+            },
+            {
+                threshold: 0.5,
+            }
+        );
+
+        io.observe(lastItem);
+    };
+
+    deattached = (event) => {
+        window.removeEventListener('resize', this.resizeEvent);
     };
 
     async getComponent() {

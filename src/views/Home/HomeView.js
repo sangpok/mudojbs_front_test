@@ -26,8 +26,8 @@ export default class extends AbstractView {
     }
 
     init = async () => {
-        window.removeEventListener('ATTACHED_VIEW', this.attached);
-        window.addEventListener('ATTACHED_VIEW', this.attached);
+        window.addEventListener('ATTACHED_VIEW', this.attached, { once: true });
+        window.addEventListener('DEATTACHED_VIEW', this.deattached, { once: true });
         await this.attachComponent();
     };
 
@@ -38,16 +38,26 @@ export default class extends AbstractView {
             window.dispatchEvent(CustomEvents.ATTACHED_COMPONENT('imagelist', 'popular'));
             window.dispatchEvent(CustomEvents.ATTACHED_COMPONENT('imagelist', 'recent'));
             window.dispatchEvent(CustomEvents.ATTACHED_COMPONENT('masonrylist', 'new'));
-            window.removeEventListener('ATTACHED_VIEW', this.attached);
+        }
+    };
+
+    deattached = (event) => {
+        if (event.detail.target === 'home') {
+            console.log('Deattached Home View');
+            // TODO Spread the event to components
+            window.dispatchEvent(CustomEvents.DEATTACHED_COMPONENT('imagelist', 'popular'));
+            window.dispatchEvent(CustomEvents.DEATTACHED_COMPONENT('imagelist', 'recent'));
+            window.dispatchEvent(CustomEvents.DEATTACHED_COMPONENT('masonrylist', 'new'));
         }
     };
 
     attachComponent = async () => {
         popularComponent = new ImageList('popular', '#최근_가장_인기있는_짤');
         recentComponent = new ImageList('recent', '#최근_추가된_짤');
-        masonryComponent = new MasonryList('새로운 짤을 발견해보세요!');
+        masonryComponent = new MasonryList('new', '새로운 짤을 발견해보세요!');
 
         const root = $('.page-inside');
+        root.innerHTML = '';
 
         popularComponent.createEleFromImages(await imageAPI.getImage('임시', 1, 10, true), true);
         recentComponent.createEleFromImages(await imageAPI.getImage('임시', 1, 10, true), true);

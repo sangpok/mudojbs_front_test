@@ -1,0 +1,233 @@
+@import '../../styles/mixins';
+
+main.create div.page-container {
+    width: 100%;
+    padding: 0 0 24px;
+
+    div.page-inside {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: 0 48px;
+        margin: 0 auto;
+        max-width: 1440px;
+
+        div.upload-container {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            margin-bottom: 12px;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+
+            div.file-preview-container {
+                display: flex;
+                width: 70%;
+                height: 700px;
+                border: 1px dashed #6c6c6c;
+                background-color: #f3f3f3;
+                justify-content: center;
+                align-items: center;
+                border-radius: 5px;
+
+                p {
+                    text-align: center;
+                    pointer-events: none;
+
+                    &.hide {
+                        display: none;
+                    }
+                }
+
+                div.image-wrapper {
+                    display: none;
+                    flex-direction: row;
+                    overflow: hidden;
+                    width: 100%;
+                    height: 100%;
+                    background-color: black;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 5px;
+
+                    img#preview-image {
+                        margin: 0 auto;
+                        // width: 100%;
+                        // height: 100%;
+                        max-width: 100%;
+                        max-height: 100%;
+                    }
+
+                    &.loaded {
+                        display: flex;
+                    }
+                }
+            }
+
+            div.upload-section {
+                display: flex;
+                flex-direction: column;
+                width: 30%;
+                font-size: 14px;
+                justify-content: center;
+                align-content: center;
+                gap: 24px;
+
+                p.title {
+                    margin-bottom: 12px;
+                    font-size: 16px;
+                    font-weight: 700;
+                }
+
+                div.file-upload-container {
+                    button#select-file {
+                        width: 100%;
+                        height: 100%;
+                        padding: 8px 0;
+                        border: none;
+                        background-color: #5b85d9;
+                        color: white;
+                        font-size: 14px;
+                        font-size: 16px;
+                        outline: none;
+                        appearance: none;
+                        font-weight: 700;
+                        border-radius: 50px;
+                        cursor: pointer;
+                    }
+                }
+
+                div.writing-tag-container {
+                    div.description {
+                        margin-bottom: 24px;
+                        padding-left: 24px;
+                        ul {
+                            margin-bottom: 4px;
+                        }
+                    }
+
+                    div.tag-input-container {
+                        height: 475px;
+                        padding: 0 12px;
+                        border: 1px dashed #6c6c6c;
+                        background-color: white;
+                        border-radius: 5px;
+
+                        div.tag-input-inside {
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 4px;
+                            padding: 12px 0;
+
+                            div.inputed-tag-item {
+                                display: flex;
+                                padding: 0 4px;
+                                height: fit-content;
+                                border: 1px solid #cecece;
+                                background-color: #f3f3f3;
+                                justify-content: center;
+                                align-items: center;
+                                border-radius: 3px;
+                                cursor: pointer;
+
+                                span:first-child {
+                                    font-size: 15px;
+                                }
+
+                                span.tag-item {
+                                    padding: 2px 0;
+                                    pointer-events: none;
+                                    width: max-content;
+                                }
+
+                                &:hover {
+                                    background-color: #fff9f9;
+                                }
+
+                                &.highlight {
+                                    animation-duration: 1s;
+                                    animation-name: alarm;
+                                }
+                            }
+
+                            input#tag-query {
+                                display: inline-block;
+                                width: 100px;
+                                border: none;
+                                background: none;
+                                outline: none;
+                                appearance: none;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        div.upload-button-container {
+            text-align: right;
+
+            button#upload {
+                width: fit-content;
+                height: 100%;
+                padding: 8px 24px;
+                border: none;
+                background-color: #5b85d9;
+                color: white;
+                font-size: 14px;
+                outline: none;
+                appearance: none;
+                font-weight: 700;
+                border-radius: 50px;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+@keyframes alarm {
+    from {
+        background-color: rgb(233, 86, 86);
+    }
+
+    to {
+        background-color: #f3f3f3;
+    }
+}
+
+@include mobile {
+    main.create div.page-container {
+        div.page-inside {
+            padding: 0 12px;
+
+            div.upload-container {
+                div.file-preview-container {
+                    display: none;
+                }
+
+                div.upload-section {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+
+@include tablet {
+    main.create div.page-container {
+        div.page-inside {
+            padding: 0 48px;
+
+            div.upload-container {
+                div.file-preview-container {
+                    display: none;
+                }
+
+                div.upload-section {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}

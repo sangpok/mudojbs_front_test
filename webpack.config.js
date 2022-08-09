@@ -14,6 +14,7 @@ const config = {
     entry: './src/app.js',
     output: {
         path: path.resolve(__dirname, 'dist'),
+        publicPath: '/',
     },
     devServer: {
         client: {
@@ -24,6 +25,7 @@ const config = {
         hot: true,
         static: './src/assets',
         host: 'localhost',
+        historyApiFallback: true,
         onBeforeSetupMiddleware: function (devServer) {
             if (!devServer) {
                 throw new Error('webpack-dev-server is not defined');
@@ -45,11 +47,6 @@ const config = {
 
                     res.json(resultList);
                 });
-            });
-
-            devServer.app.get('*', (req, res, next) => {
-                // res.sendFile(path.resolve(__dirname, './dist/index.html'));
-                next();
             });
         },
     },

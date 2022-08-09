@@ -1,33 +1,56 @@
 import headerDOM from './header.html';
 import './header.scss';
 
+import Router from '../../js/router';
+const myRouter = new Router();
+
 const $ = (param, defaultDOM = document) => defaultDOM.querySelector(param);
 const $$ = (param, defaultDOM = document) => defaultDOM.querySelectorAll(param);
 
 export default class {
     myDOM = new DOMParser().parseFromString(headerDOM, 'text/html');
 
-    constructor() {
-        this.init();
-    }
+    constructor() {}
 
     init = async () => {
+        window.addEventListener('ATTACHED_COMPONENT_header_', this.attached, { once: true });
         window.addEventListener('click', this.windowClickEvent);
-        window.addEventListener('ATTACHED_COMPONENT', this.attached);
     };
 
     attached = (event) => {
         if (event.detail.type === 'header') {
             console.log('Attached Header Component');
+            $('#search-query').addEventListener('keyup', this.keyUpEvent);
+            $('ul#related-list').addEventListener('click', this.listClickEvent);
         }
+    };
+
+    keyUpEvent = (event) => {
+        if (event.key === 'Enter') {
+            const myQuery = $('#search-query').value;
+            if (myQuery === '') return;
+
+            this.closeRelatedBox();
+            myRouter.navigate(`/search/${encodeURIComponent(myQuery)}`);
+        } else {
+            // TODO Get related keyword
+        }
+    };
+
+    listClickEvent = (event) => {
+        event.stopImmediatePropagation();
+        this.closeRelatedBox();
+
+        const myQuery = event.target.closest('li').dataset.item;
+        $('#search-query').value = myQuery;
+        myRouter.navigate(`/search/${encodeURIComponent(myQuery)}`);
     };
 
     windowClickEvent = (event) => {
         let container = event.target.closest('[data-search-container]');
 
         if (!container) {
-            $(`#related-box`).classList.remove('show');
-            $(`#search-box`).classList.remove('focus');
+            this.closeRelatedBox();
         } else {
             let nowMedia = getComputedStyle(document.documentElement)
                 .getPropertyValue('--now-media')
@@ -37,20 +60,29 @@ export default class {
 
             if (isMobile && container) {
                 if (event.target.closest('.mobile-back')) {
-                    $(`#related-box`).classList.remove('show');
-                    $(`#search-box`).classList.remove('focus');
-                    $('.search-container').classList.remove('mobile');
-                    this.setSearchQuery('');
+                    this.closeRelatedBox(isMobile);
+                    // this.setSearchQuery('');
                 } else {
-                    $('.search-container').classList.add('mobile');
-                    $(`#related-box`).classList.add('show');
-                    $(`#search-box`).classList.add('focus');
+                    this.openRelatedBox(isMobile);
                 }
             } else {
-                $(`#related-box`).classList.add('show');
-                $(`#search-box`).classList.add('focus');
+                this.openRelatedBox(isMobile);
             }
         }
+    };
+
+    openRelatedBox = (isMobile = false) => {
+        if (isMobile) $('.search-container').classList.add('mobile');
+
+        $(`#related-box`).classList.add('show');
+        $(`#search-box`).classList.add('focus');
+    };
+
+    closeRelatedBox = (isMobile = false) => {
+        if (isMobile) $('.search-container').classList.remove('mobile');
+
+        $(`#related-box`).classList.remove('show');
+        $(`#search-box`).classList.remove('focus');
     };
 
     updateMenuState = () => {

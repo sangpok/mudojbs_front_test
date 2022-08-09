@@ -18,8 +18,11 @@ export default class {
     }
 
     init = async (title) => {
-        // console.log(window.onclick);
-        window.addEventListener('ATTACHED_COMPONENT', this.attached);
+        window.addEventListener(
+            `ATTACHED_COMPONENT_imagelist_${this.containerName}`,
+            this.attached,
+            { once: true }
+        );
 
         $('div.image-list-container', this.myDOM).dataset.container = this.containerName;
         $('p.title', this.myDOM).textContent = title;
@@ -27,18 +30,20 @@ export default class {
     };
 
     attached = (event) => {
-        if (event.detail.type === 'imagelist') {
-            switch (event.detail.target) {
-                case 'popular':
-                    console.log(`Attached imagelist(${event.detail.target}) Component`);
-                    break;
+        switch (event.detail.target) {
+            case 'popular':
+                console.log(`Attached imagelist(${event.detail.target}) Component`);
+                break;
 
-                case 'recent':
-                    console.log(`Attached imagelist(${event.detail.target}) Component`);
-                    break;
-            }
-            window.removeEventListener('ATTACHED_COMPONENT', this.attached);
+            case 'recent':
+                console.log(`Attached imagelist(${event.detail.target}) Component`);
+                break;
         }
+
+        $(`[data-container=${this.containerName}] button.load-more`).addEventListener(
+            'click',
+            this.clickEvent
+        );
     };
 
     clickEvent = (event) => {

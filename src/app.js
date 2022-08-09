@@ -25,13 +25,26 @@ class App {
             const config = { attributes: true, childList: true, subtree: true };
             const observer = new MutationObserver((mutation, observer) => {
                 observer.disconnect();
-                window.dispatchEvent(CustomEvents.ATTACHED_COMPONENT('header'));
+                window.dispatchEvent(CustomEvents.ATTACHED_COMPONENT('header'), { once: true });
             });
 
             observer.observe(root, config);
 
+            myHeader.init();
+
             body.insertBefore(await myHeader.getComponent(), root);
             myRouter.route();
+        });
+
+        window.addEventListener('click', (event) => {
+            let linkElem = event.target.closest('a');
+
+            if (linkElem) {
+                event.stopPropagation();
+                event.preventDefault();
+
+                myRouter.navigate(linkElem.href);
+            }
         });
     };
 }
