@@ -42,7 +42,12 @@ export default class extends AbstractView {
         imageViewComponent = new ImageView(this.imageId);
         masonryComponent = new MasonryList('related', '관련 이미지');
 
-        masonryComponent.appendImages(await imageAPI.getImage('임시', 1, 30, true), true);
+        masonryComponent.setLoadFunction(async () => {
+            this.appendImages(await imageAPI.getImageRelated());
+        });
+
+        // masonryComponent.appendImages(await imageAPI.getImage('임시', 1, 30), true);
+        masonryComponent.appendImages(await imageAPI.getImageRandom(), true);
 
         root.appendChild(await imageViewComponent.getComponent());
         root.appendChild(await masonryComponent.getComponent());

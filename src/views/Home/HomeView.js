@@ -59,12 +59,16 @@ export default class extends AbstractView {
         recentComponent = new ImageList('recent', '#최근_추가된_짤');
         masonryComponent = new MasonryList('new', '새로운 짤을 발견해보세요!');
 
+        masonryComponent.setLoadFunction(async () => {
+            this.appendImages(await imageAPI.getImageRandom());
+        });
+
         const root = $('.page-inside', myDOM);
         // root.innerHTML = '';
 
-        popularComponent.createEleFromImages(await imageAPI.getImage('임시', 1, 10, true), true);
-        recentComponent.createEleFromImages(await imageAPI.getImage('임시', 1, 10, true), true);
-        masonryComponent.appendImages(await imageAPI.getImage('임시', 1, 30, true), true);
+        popularComponent.createEleFromImages(await imageAPI.getImagePopular());
+        recentComponent.createEleFromImages(await imageAPI.getImageNew());
+        masonryComponent.appendImages(await imageAPI.getImageRandom(), true);
 
         root.appendChild(await popularComponent.getComponent());
         root.appendChild(await recentComponent.getComponent());

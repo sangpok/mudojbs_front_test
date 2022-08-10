@@ -46,7 +46,10 @@ export default class extends AbstractView {
         const root = $('.page-inside', myDOM);
         root.innerHTML = '';
 
-        masonryComponent.appendImages(await imageAPI.getImage('임시', 1, 30, true), true);
+        masonryComponent.appendImages(
+            (await imageAPI.getImage(this.searchQuery, 1, 30)).content,
+            true
+        );
 
         root.appendChild(await masonryComponent.getComponent());
     };

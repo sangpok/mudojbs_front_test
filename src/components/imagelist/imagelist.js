@@ -8,6 +8,7 @@ const $ = (param, defaultDOM = document) => defaultDOM.querySelector(param);
 const $$ = (param, defaultDOM = document) => defaultDOM.querySelectorAll(param);
 
 export default class {
+    isDev = false;
     isOpened = false;
     containerName = null;
     myDOM = new DOMParser().parseFromString(imageListDOM, 'text/html');
@@ -57,23 +58,32 @@ export default class {
         }
     };
 
-    createEleFromImages = (imageList, onlyDev = false) => {
+    createEleFromImages = (imageList) => {
         // <li class="image-item">
         //     <a href="#">
         //         <img src="../../assets/images/test_asset/10.jpg" alt="" />
         //     </a>
         // </li>;
 
-        for (let [index, imageItem] of imageList.entries()) {
+        let listObject = null;
+
+        console.log(imageList);
+        if (this.isDev) {
+            listObject = imageList.entries();
+        } else {
+            listObject = imageList.entries();
+        }
+
+        for (let [index, imageItem] of listObject) {
             let newLi = this.myDOM.createElement('li');
             let newA = this.myDOM.createElement('a');
             let newImg = this.myDOM.createElement('img');
 
-            newA.setAttribute('href', `/view/${imageItem.imageUrl.split('.')[0]}`);
-
-            if (onlyDev) {
+            if (this.isDev) {
+                newA.setAttribute('href', `/view/${imageItem.imageUrl.split('.')[0]}`);
                 newImg.setAttribute('src', `/images/test_asset/${imageItem.imageUrl}`);
             } else {
+                newA.setAttribute('href', `/view/${imageItem.id}`);
                 newImg.setAttribute('src', imageItem.imageUrl);
             }
 
