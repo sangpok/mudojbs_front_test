@@ -13,7 +13,7 @@ const imageAPI = new ImageAPI();
 
 import CustomEvents from '../../js/events';
 
-const myDOM = new DOMParser().parseFromString(DetailView, 'text/html');
+let myDOM = null;
 
 const $ = (param, defaultDOM = myDOM) => defaultDOM.querySelector(param);
 const $$ = (param, defaultDOM = myDOM) => defaultDOM.querySelectorAll(param);
@@ -28,12 +28,15 @@ export default class extends AbstractView {
     }
 
     init = async () => {
+        myDOM = new DOMParser().parseFromString(DetailView, 'text/html');
+
         window.addEventListener(`ATTACHED_VIEW`, this.attached, { once: true });
+
         await this.attachComponent();
     };
 
     attachComponent = async () => {
-        const root = $('.page-inside');
+        const root = $('.page-inside', myDOM);
         root.innerHTML = '';
 
         imageViewComponent = new ImageView(this.imageId);

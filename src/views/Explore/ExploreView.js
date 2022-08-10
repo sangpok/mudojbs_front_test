@@ -5,10 +5,10 @@ import './ExploreView.scss';
 import ImageAPI from '../../js/api';
 const imageAPI = new ImageAPI();
 
-const myDOM = new DOMParser().parseFromString(ExploreView, 'text/html');
+let myDOM = null;
 
-const $ = (param, defaultDOM = myDOM) => defaultDOM.querySelector(param);
-const $$ = (param, defaultDOM = myDOM) => defaultDOM.querySelectorAll(param);
+const $ = (param, defaultDOM = document) => defaultDOM.querySelector(param);
+const $$ = (param, defaultDOM = document) => defaultDOM.querySelectorAll(param);
 
 export default class extends AbstractView {
     constructor(urlParams = null, queryParams = null) {
@@ -17,11 +17,12 @@ export default class extends AbstractView {
     }
 
     init = async () => {
+        myDOM = new DOMParser().parseFromString(ExploreView, 'text/html');
         await this.attachComponent();
     };
 
     attachComponent = async () => {
-        const root = $('.page-inside');
+        const root = $('.page-inside', myDOM);
     };
 
     async getView() {

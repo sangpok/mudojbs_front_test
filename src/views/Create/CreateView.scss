@@ -16,59 +16,17 @@ main.create div.page-container {
             display: flex;
             flex-direction: row;
             width: 100%;
+            height: 100%;
             margin-bottom: 12px;
             justify-content: center;
             align-items: center;
             gap: 24px;
 
-            div.file-preview-container {
-                display: flex;
-                width: 70%;
-                height: 700px;
-                border: 1px dashed #6c6c6c;
-                background-color: #f3f3f3;
-                justify-content: center;
-                align-items: center;
-                border-radius: 5px;
-
-                p {
-                    text-align: center;
-                    pointer-events: none;
-
-                    &.hide {
-                        display: none;
-                    }
-                }
-
-                div.image-wrapper {
-                    display: none;
-                    flex-direction: row;
-                    overflow: hidden;
-                    width: 100%;
-                    height: 100%;
-                    background-color: black;
-                    justify-content: center;
-                    align-items: center;
-                    border-radius: 5px;
-
-                    img#preview-image {
-                        margin: 0 auto;
-                        // width: 100%;
-                        // height: 100%;
-                        max-width: 100%;
-                        max-height: 100%;
-                    }
-
-                    &.loaded {
-                        display: flex;
-                    }
-                }
-            }
-
             div.upload-section {
                 display: flex;
                 flex-direction: column;
                 width: 30%;
+                height: 700px;
                 font-size: 14px;
                 justify-content: center;
                 align-content: center;
@@ -80,24 +38,6 @@ main.create div.page-container {
                     font-weight: 700;
                 }
 
-                div.file-upload-container {
-                    button#select-file {
-                        width: 100%;
-                        height: 100%;
-                        padding: 8px 0;
-                        border: none;
-                        background-color: #5b85d9;
-                        color: white;
-                        font-size: 14px;
-                        font-size: 16px;
-                        outline: none;
-                        appearance: none;
-                        font-weight: 700;
-                        border-radius: 50px;
-                        cursor: pointer;
-                    }
-                }
-
                 div.writing-tag-container {
                     div.description {
                         margin-bottom: 24px;
@@ -106,61 +46,10 @@ main.create div.page-container {
                             margin-bottom: 4px;
                         }
                     }
+                }
 
-                    div.tag-input-container {
-                        height: 475px;
-                        padding: 0 12px;
-                        border: 1px dashed #6c6c6c;
-                        background-color: white;
-                        border-radius: 5px;
-
-                        div.tag-input-inside {
-                            display: flex;
-                            flex-wrap: wrap;
-                            gap: 4px;
-                            padding: 12px 0;
-
-                            div.inputed-tag-item {
-                                display: flex;
-                                padding: 0 4px;
-                                height: fit-content;
-                                border: 1px solid #cecece;
-                                background-color: #f3f3f3;
-                                justify-content: center;
-                                align-items: center;
-                                border-radius: 3px;
-                                cursor: pointer;
-
-                                span:first-child {
-                                    font-size: 15px;
-                                }
-
-                                span.tag-item {
-                                    padding: 2px 0;
-                                    pointer-events: none;
-                                    width: max-content;
-                                }
-
-                                &:hover {
-                                    background-color: #fff9f9;
-                                }
-
-                                &.highlight {
-                                    animation-duration: 1s;
-                                    animation-name: alarm;
-                                }
-                            }
-
-                            input#tag-query {
-                                display: inline-block;
-                                width: 100px;
-                                border: none;
-                                background: none;
-                                outline: none;
-                                appearance: none;
-                            }
-                        }
-                    }
+                div.tag-input-container {
+                    flex-grow: 1;
                 }
             }
         }
@@ -202,12 +91,25 @@ main.create div.page-container {
             padding: 0 12px;
 
             div.upload-container {
+                flex-direction: column;
+
                 div.file-preview-container {
                     display: none;
+                    width: 100%;
+                    height: 250px;
+
+                    &.loaded {
+                        display: block;
+                    }
                 }
 
                 div.upload-section {
                     width: 100%;
+                    height: 100%;
+
+                    div.tag-input-container {
+                        height: 100%;
+                    }
                 }
             }
         }
@@ -220,12 +122,25 @@ main.create div.page-container {
             padding: 0 48px;
 
             div.upload-container {
+                flex-direction: column;
+
                 div.file-preview-container {
                     display: none;
+                    width: 100%;
+                    height: 500px;
+
+                    &.loaded {
+                        display: block;
+                    }
                 }
 
                 div.upload-section {
                     width: 100%;
+                    height: 500px;
+
+                    div.tag-input-container {
+                        height: 100%;
+                    }
                 }
             }
         }

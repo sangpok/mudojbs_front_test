@@ -65,7 +65,6 @@ export default class {
         // const config2 = { attributes: true, childList: true, subtree: true };
         // const observer2 = new MutationObserver((mutation, observer) => {
         // observer.disconnect();
-        console.log(currentPath);
         if (currentPath !== null) window.dispatchEvent(CustomEvents.DEATTACHED_VIEW(pageName));
         // });
 

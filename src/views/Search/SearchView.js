@@ -10,10 +10,10 @@ const imageAPI = new ImageAPI();
 
 import CustomEvents from '../../js/events';
 
-const myDOM = new DOMParser().parseFromString(SearchView, 'text/html');
+let myDOM = null;
 
-const $ = (param, defaultDOM = myDOM) => defaultDOM.querySelector(param);
-const $$ = (param, defaultDOM = myDOM) => defaultDOM.querySelectorAll(param);
+const $ = (param, defaultDOM = document) => defaultDOM.querySelector(param);
+const $$ = (param, defaultDOM = document) => defaultDOM.querySelectorAll(param);
 
 export default class extends AbstractView {
     searchQuery = null;
@@ -25,7 +25,10 @@ export default class extends AbstractView {
     }
 
     init = async () => {
+        myDOM = new DOMParser().parseFromString(SearchView, 'text/html');
+
         window.addEventListener('ATTACHED_VIEW', this.attached, { once: true });
+
         await this.attachComponent();
     };
 
@@ -40,7 +43,7 @@ export default class extends AbstractView {
     attachComponent = async () => {
         masonryComponent = new MasonryList('search', `${this.searchQuery}에 관한 검색결과`);
 
-        const root = $('.page-inside');
+        const root = $('.page-inside', myDOM);
         root.innerHTML = '';
 
         masonryComponent.appendImages(await imageAPI.getImage('임시', 1, 30, true), true);
